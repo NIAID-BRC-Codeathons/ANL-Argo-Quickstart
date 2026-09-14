@@ -33,7 +33,8 @@ examples/
 **Two-minute start:**
 
 ```bash
-git clone <THIS-REPO-URL> && cd "$(basename <THIS-REPO-URL> .git)"
+git clone https://github.com/NIAID-BRC-Codeathons/ANL-Argo-Quickstart
+cd ANL-Argo-Quickstart
 export ARGO_USER=ac.yourname          # your Argonne collaborator username
 ./examples/00-smoke-test.sh           # JSON list of models = you're good
 ```
@@ -94,28 +95,42 @@ A JSON list of model names means you're good. Anything else — see
 
 ## 2. What you may send
 
-Argo is a gateway, not a destination. Your prompt leaves Argonne and is processed by
-a commercial provider — OpenAI, Anthropic, or Google. Two limits follow from that, and
-the codeathon organizers want them in front of you before you paste anything real:
+Argo is a gateway. Your prompt is not processed on a machine in an Argonne server
+room — it goes to a commercial model running in cloud infrastructure Argonne
+controls. Argonne's position on what that means:
 
-- **None of these models guarantee secure handling of CUI.** Do not put controlled
-  unclassified information through Argo.
-- **None of them guarantee that your data is processed in the United States.** If a
-  dataset carries a data-residency obligation, Argo cannot satisfy it.
+- **Argo is approved for CUI.**
+- **Processing stays in US-based data centers.** This holds across every model family
+  Argo fronts: the OpenAI models run in Argonne's Microsoft tenancy under the same
+  controls that govern its M365 environment, and the Anthropic and Google models run
+  in an equivalent US-based enclave.
 
-Beyond those two, your calls are subject to **whatever guardrails are in place on the
-target model**. Those are the vendor's, not Argonne's, and they vary by model. A
-scientifically routine prompt can be refused or flagged — the Argo maintainers
-documented a plain code-generation prompt being rejected as a suspected policy
-violation. When that happens it is the provider's filter, not a problem with your
-account: rephrase, or try another model family.
-
-**In practice.** Treat anything you send as having left your institution's control.
-If data is not yours to publish — unpublished collaborator results, clinical or
+**Be deliberate anyway.** An approval covers the platform. It does not cover the
+decision to put a particular dataset into a prompt, and that decision is yours. If
+data is not yours to publish — unpublished collaborator results, clinical or
 personally identifying records, embargoed or otherwise restricted material — clear it
-with the data owner before it goes into a prompt. This applies to files as well as to
-what you type: a coding assistant transmits the contents of the files it reasons
-about, so the rule covers your working directory, not just the chat box.
+with the data owner before it goes into a prompt. Argonne asks users to keep
+personally identifying information out of prompts in particular. The blunt reason to
+care: if something does end up somewhere it shouldn't, "the platform was approved"
+will not be much comfort to you, and the codeathon organizers would rather nobody ends
+up pointing at Argonne over a judgment call made at this event.
+
+This applies to files as much as to what you type. A coding assistant transmits the
+contents of the files it reasons about, so the rule covers your working directory, not
+just the chat box.
+
+**Guardrails belong to the model vendor, not to Argonne.** Your calls are subject to
+whatever content filters are in place on the target model, and those vary by model
+family. A scientifically routine prompt can be refused or flagged — the Argo
+maintainers documented a plain code-generation prompt being rejected as a suspected
+policy violation. When that happens it is the provider's filter, not a problem with
+your account: rephrase, or try another model family.
+
+**What Argonne records.** Argonne does not store the content of prompts or responses,
+and does not use them to train or improve the models. What it does record is usage
+metadata — your username, the time, the model, and the *length* of each prompt and
+response. Your usage is therefore logged against your `ac.` username and is
+attributable to you.
 
 If you are unsure whether something is safe to send, ask the codeathon organizers
 before you send it, not after.
@@ -711,10 +726,9 @@ Any tool that speaks the OpenAI or Anthropic wire format can be pointed at Argo.
 The pattern is always the same: **override the base URL, and use your username
 where the tool asks for an API key.**
 
-> Argonne maintains a dedicated **"Vibe Coding with Argo"** guide with
-> per-tool configuration and maintained config templates:
-> <https://anl.box.com/s/hxc72dkm0a8mlmo7ownfl4ixwx6iu3ko>
-> Treat that as authoritative if it disagrees with the settings below.
+> Argonne maintains a dedicated **"Vibe Coding with Argo"** guide with per-tool
+> configuration and maintained config templates. Ask the codeathon organizers for
+> access. Treat that guide as authoritative if it disagrees with the settings below.
 
 **Two things to know before you point an agent at Argo.**
 
@@ -849,8 +863,6 @@ your username.
 | Codeathon organizers | First stop for access, accounts, and network issues |
 | Interactive API explorer | <https://apps.inside.anl.gov/argoapi/docs> |
 | Live model list | `GET https://apps.inside.anl.gov/argoapi/v1/models` |
-| Argo API Community of Practice | Internal Teams channel — ask the organizers about joining |
-| Vibe Coding with Argo | <https://anl.box.com/s/hxc72dkm0a8mlmo7ownfl4ixwx6iu3ko> |
 
 ---
 

@@ -220,19 +220,23 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap;font-family:var(--f-
 
   <section id="data">
     <h2><span class="n">02</span>What you may send</h2>
-    <p class="sub">Argo is a gateway, not a destination. Your prompt leaves Argonne and is processed by a commercial provider.</p>
+    <p class="sub">Argo is a gateway. Your prompt is processed by a commercial model running in cloud infrastructure Argonne controls &mdash; not on a machine in an Argonne server room.</p>
 
     <div class="note caution">
-      <span class="tag">Two hard limits</span>
+      <span class="tag">Argonne&rsquo;s position</span>
       <ul>
-        <li><b>None of these models guarantee secure handling of CUI.</b> Do not put controlled unclassified information through Argo.</li>
-        <li><b>None of them guarantee that your data is processed in the United States.</b> If a dataset carries a data-residency obligation, Argo cannot satisfy it.</li>
+        <li><b>Argo is approved for CUI.</b></li>
+        <li><b>Processing stays in US-based data centers.</b> This holds across every model family Argo fronts: the OpenAI models run in Argonne&rsquo;s Microsoft tenancy under the same controls that govern its M365 environment, and the Anthropic and Google models run in an equivalent US-based enclave.</li>
       </ul>
     </div>
 
-    <p>Beyond those two, your calls are subject to <b>whatever guardrails are in place on the target model</b>. Those are the vendor&rsquo;s, not Argonne&rsquo;s, and they vary by model. A scientifically routine prompt can be refused or flagged &mdash; the Argo maintainers documented a plain code-generation prompt being rejected as a suspected policy violation. When that happens it is the provider&rsquo;s filter, not a problem with your account: rephrase, or try another model family.</p>
+    <p><b>Be deliberate anyway.</b> An approval covers the platform. It does not cover the decision to put a particular dataset into a prompt, and that decision is yours. If data is not yours to publish &mdash; unpublished collaborator results, clinical or personally identifying records, embargoed or otherwise restricted material &mdash; clear it with the data owner before it goes into a prompt. Argonne asks users to keep personally identifying information out of prompts in particular. The blunt reason to care: if something does end up somewhere it shouldn&rsquo;t, &ldquo;the platform was approved&rdquo; will not be much comfort to you, and the codeathon organizers would rather nobody ends up pointing at Argonne over a judgment call made at this event.</p>
 
-    <p><b>In practice.</b> Treat anything you send as having left your institution&rsquo;s control. If data is not yours to publish &mdash; unpublished collaborator results, clinical or personally identifying records, embargoed or otherwise restricted material &mdash; clear it with the data owner before it goes into a prompt. This applies to files as well as to what you type: a coding assistant transmits the contents of the files it reasons about, so the rule covers your working directory, not just the chat box.</p>
+    <p>This applies to files as much as to what you type. A coding assistant transmits the contents of the files it reasons about, so the rule covers your working directory, not just the chat box.</p>
+
+    <p><b>Guardrails belong to the model vendor, not to Argonne.</b> Your calls are subject to whatever content filters are in place on the target model, and those vary by model family. A scientifically routine prompt can be refused or flagged &mdash; the Argo maintainers documented a plain code-generation prompt being rejected as a suspected policy violation. When that happens it is the provider&rsquo;s filter, not a problem with your account: rephrase, or try another model family.</p>
+
+    <p><b>What Argonne records.</b> Argonne does not store the content of prompts or responses, and does not use them to train or improve the models. What it does record is usage metadata &mdash; your username, the time, the model, and the <em>length</em> of each prompt and response. Your usage is therefore logged against your <code>ac.</code> username and is attributable to you.</p>
 
     <p>If you are unsure whether something is safe to send, ask the codeathon organizers before you send it, not after.</p>
   </section>
@@ -745,7 +749,7 @@ print(llm.complete("In one sentence, what is a pangenome?"))</code></pre></div>
 
     <div class="note">
       <span class="tag">Authoritative source</span>
-      <p>Argonne maintains a dedicated <b>Vibe Coding with Argo</b> guide with per-tool setup and maintained config templates: <a href="https://anl.box.com/s/hxc72dkm0a8mlmo7ownfl4ixwx6iu3ko">anl.box.com/s/hxc72dkm0a8mlmo7ownfl4ixwx6iu3ko</a>. Treat it as authoritative where it disagrees with the settings below.</p>
+      <p>Argonne maintains a dedicated <b>Vibe Coding with Argo</b> guide with per-tool setup and maintained config templates. Ask the codeathon organizers for access. Treat it as authoritative where it disagrees with the settings below.</p>
     </div>
 
     <div class="note caution">
@@ -850,8 +854,6 @@ aider --model openai/claudesonnet5</code></pre></div>
         <tr><td><strong>Codeathon organizers</strong></td><td>First stop for access, accounts, and network issues</td></tr>
         <tr><td><strong>Interactive API explorer</strong></td><td><a href="https://apps.inside.anl.gov/argoapi/docs">apps.inside.anl.gov/argoapi/docs</a></td></tr>
         <tr><td><strong>Live model list</strong></td><td><code>GET /argoapi/v1/models</code></td></tr>
-        <tr><td><strong>Argo API Community of Practice</strong></td><td>Internal Teams channel &mdash; ask the organizers about joining</td></tr>
-        <tr><td><strong>Vibe Coding with Argo</strong></td><td><a href="https://anl.box.com/s/hxc72dkm0a8mlmo7ownfl4ixwx6iu3ko">anl.box.com/s/hxc72dkm0a8mlmo7ownfl4ixwx6iu3ko</a></td></tr>
       </tbody>
     </table></div>
     <div class="foot">
