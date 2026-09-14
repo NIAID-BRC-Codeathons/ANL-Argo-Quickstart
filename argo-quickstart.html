@@ -1,0 +1,940 @@
+<title>Argo Gateway Quickstart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+:root{
+  --bg:#F4F6F4; --surface:#FFFFFF; --surface-2:#EDF0EC; --code-bg:#F0F3EF;
+  --ink:#141D19; --ink-2:#3B4A43; --muted:#63756C; --rule:#D9E0D9; --rule-2:#C3CEC5;
+  --accent:#0C6B58; --accent-soft:#DCEFE7; --accent-ink:#07503F;
+  --caution:#8A5406; --caution-soft:#F8ECD6; --caution-rule:#E3C48A;
+  --stop:#9E2C1E; --stop-soft:#F8E3DF; --stop-rule:#E0AFA6;
+  --shadow:0 1px 2px rgba(20,29,25,.05), 0 6px 20px -12px rgba(20,29,25,.22);
+  --f-sans:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+  --f-serif:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+  --f-mono:"IBM Plex Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1411; --surface:#141D19; --surface-2:#1B2622; --code-bg:#101A16;
+    --ink:#E7EEE9; --ink-2:#C0CDC5; --muted:#8DA298; --rule:#25332C; --rule-2:#33453C;
+    --accent:#48CFA6; --accent-soft:#122E26; --accent-ink:#7BE0C2;
+    --caution:#E5AE55; --caution-soft:#2E2414; --caution-rule:#5C4620;
+    --stop:#EE8574; --stop-soft:#2E1916; --stop-rule:#5E2E26;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -14px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1411; --surface:#141D19; --surface-2:#1B2622; --code-bg:#101A16;
+  --ink:#E7EEE9; --ink-2:#C0CDC5; --muted:#8DA298; --rule:#25332C; --rule-2:#33453C;
+  --accent:#48CFA6; --accent-soft:#122E26; --accent-ink:#7BE0C2;
+  --caution:#E5AE55; --caution-soft:#2E2414; --caution-rule:#5C4620;
+  --stop:#EE8574; --stop-soft:#2E1916; --stop-rule:#5E2E26;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -14px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-serif);font-size:16.5px;line-height:1.65;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px;padding-block:0 72px}
+
+/* ---------- masthead ---------- */
+.mast{border-bottom:1px solid var(--rule);padding-block:40px 30px;margin-bottom:34px}
+.eyebrow{font-family:var(--f-sans);font-size:11.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--accent-ink);margin:0 0 14px}
+.mast h1{font-family:var(--f-sans);font-weight:700;font-size:clamp(30px,5.4vw,46px);line-height:1.06;letter-spacing:-.022em;margin:0 0 14px;text-wrap:balance;max-width:16ch}
+.lede{font-size:18px;line-height:1.6;color:var(--ink-2);margin:0;max-width:60ch}
+.lede b{font-weight:600;color:var(--ink)}
+
+/* ---------- setup bar ---------- */
+.setup{display:flex;flex-wrap:wrap;gap:18px 28px;align-items:flex-end;background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:18px 20px;margin-bottom:34px;box-shadow:var(--shadow)}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1 1 250px}
+.field label{font-family:var(--f-sans);font-size:11.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.forget{font-family:var(--f-sans);font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--muted);background:transparent;border:1px solid var(--rule-2);border-radius:2px;padding:7px 12px;cursor:pointer;align-self:flex-end}
+.forget:hover{color:var(--ink);border-color:var(--ink)}
+.field input{font-family:var(--f-mono);font-size:15px;color:var(--ink);background:var(--code-bg);border:1px solid var(--rule-2);border-radius:2px;padding:9px 11px;width:100%}
+.field input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.setup .hint{font-family:var(--f-sans);font-size:13.5px;color:var(--muted);flex:1 1 300px;margin:0;line-height:1.5}
+.setup .hint b{color:var(--ink-2);font-weight:600}
+
+/* ---------- layout ---------- */
+.cols{display:grid;grid-template-columns:1fr;gap:0}
+@media (min-width:1000px){
+  .cols{grid-template-columns:206px minmax(0,1fr);gap:56px;align-items:start}
+  .toc{position:sticky;top:24px}
+  .toc-toggle{display:none}
+}
+.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:1px}
+.toc a{font-family:var(--f-sans);font-size:13.5px;line-height:1.35;color:var(--muted);text-decoration:none;display:block;padding:5px 0 5px 12px;border-left:2px solid var(--rule)}
+.toc a:hover{color:var(--ink)}
+.toc a.on{color:var(--accent-ink);border-left-color:var(--accent);font-weight:600}
+.toc a .n{font-family:var(--f-mono);font-size:11.5px;color:var(--rule-2);margin-right:7px}
+.toc a.on .n{color:var(--accent)}
+details.toc-toggle{margin-bottom:30px;border:1px solid var(--rule);border-radius:3px;background:var(--surface);padding:12px 16px}
+details.toc-toggle summary{font-family:var(--f-sans);font-size:13px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-2);cursor:pointer}
+details.toc-toggle ol{margin-top:10px}
+
+/* ---------- sections ---------- */
+section{padding-block:0 46px;scroll-margin-top:18px}
+h2{font-family:var(--f-sans);font-weight:600;font-size:25px;letter-spacing:-.012em;line-height:1.2;margin:0 0 6px;text-wrap:balance;display:flex;gap:12px;align-items:baseline}
+h2 .n{font-family:var(--f-mono);font-size:14px;font-weight:500;color:var(--accent);flex:none}
+h3{font-family:var(--f-sans);font-weight:600;font-size:16px;letter-spacing:.005em;margin:32px 0 10px;color:var(--ink)}
+.sub{font-family:var(--f-sans);font-size:14.5px;color:var(--muted);margin:0 0 22px;padding-left:26px;max-width:64ch}
+p{margin:0 0 15px;max-width:66ch}
+ul,ol.body{margin:0 0 15px;padding-left:20px;max-width:66ch}
+li{margin-bottom:7px}
+a{color:var(--accent-ink);text-decoration-thickness:1px;text-underline-offset:2px}
+hr.div{border:0;border-top:1px solid var(--rule);margin:0 0 46px}
+strong{font-weight:600}
+code{font-family:var(--f-mono);font-size:.88em;background:var(--code-bg);border:1px solid var(--rule);border-radius:2px;padding:.1em .34em;color:var(--ink);white-space:nowrap}
+
+/* ---------- code blocks ---------- */
+.code{position:relative;background:var(--code-bg);border:1px solid var(--rule);border-radius:3px;margin:0 0 20px;overflow:hidden}
+.code-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:7px 12px;border-bottom:1px solid var(--rule);background:var(--surface-2)}
+.code-lang{font-family:var(--f-sans);font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.copy{font-family:var(--f-sans);font-size:11.5px;font-weight:600;letter-spacing:.04em;color:var(--muted);background:transparent;border:1px solid var(--rule-2);border-radius:2px;padding:3px 9px;cursor:pointer}
+.copy:hover{color:var(--ink);border-color:var(--muted)}
+.copy:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.copy.done{color:var(--accent-ink);border-color:var(--accent)}
+.code pre{margin:0;padding:14px 16px;overflow-x:auto;font-family:var(--f-mono);font-size:13.2px;line-height:1.6;color:var(--ink-2)}
+.code pre code{background:none;border:0;padding:0;font-size:inherit;white-space:pre;color:inherit}
+.u{color:var(--accent-ink);font-weight:600}
+
+/* ---------- tables ---------- */
+.tw{overflow-x:auto;margin:0 0 22px;border:1px solid var(--rule);border-radius:3px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-family:var(--f-sans);font-size:14px;min-width:460px}
+th{text-align:left;font-weight:600;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:10px 14px;border-bottom:1px solid var(--rule-2);white-space:nowrap;background:var(--surface-2)}
+td{padding:10px 14px;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-2)}
+tr:last-child td{border-bottom:0}
+td code{white-space:nowrap}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap;font-family:var(--f-mono);font-size:12.5px}
+
+/* ---------- chips ---------- */
+.chip{display:inline-block;font-family:var(--f-sans);font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:2px;white-space:nowrap;border:1px solid}
+.chip.go{color:var(--accent-ink);background:var(--accent-soft);border-color:var(--accent)}
+.chip.ok{color:var(--muted);background:var(--surface-2);border-color:var(--rule-2)}
+.chip.warn{color:var(--caution);background:var(--caution-soft);border-color:var(--caution-rule)}
+.chip.stop{color:var(--stop);background:var(--stop-soft);border-color:var(--stop-rule)}
+
+/* ---------- callouts ---------- */
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:14px 18px;margin:0 0 22px;border-radius:0 3px 3px 0;max-width:70ch}
+.note.caution{border-left-color:var(--caution);background:var(--caution-soft)}
+.note p{margin:0;font-family:var(--f-sans);font-size:14.5px;line-height:1.55;color:var(--ink)}
+.note p+p{margin-top:9px}
+.note .tag{font-family:var(--f-sans);font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink);display:block;margin-bottom:5px}
+.note.caution .tag{color:var(--caution)}
+
+/* ---------- start tiles ---------- */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(212px,1fr));gap:14px;margin:0 0 26px}
+.tile{background:var(--surface);border:1px solid var(--rule);border-top:3px solid var(--accent);border-radius:2px;padding:16px 17px}
+.tile .k{font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:0 0 7px}
+.tile h4{font-family:var(--f-sans);font-size:15px;font-weight:600;margin:0 0 6px;line-height:1.3}
+.tile p{font-family:var(--f-sans);font-size:13.5px;line-height:1.5;color:var(--muted);margin:0}
+
+/* ---------- rule cards (param gotchas) ---------- */
+.rules{display:flex;flex-direction:column;gap:0;border:1px solid var(--rule);border-radius:3px;background:var(--surface);margin:0 0 22px;overflow:hidden}
+.rule{display:grid;grid-template-columns:1fr;gap:8px;padding:16px 18px;border-bottom:1px solid var(--rule)}
+.rules .rule:last-child{border-bottom:0}
+@media (min-width:760px){.rule{grid-template-columns:210px minmax(0,1fr);gap:22px}}
+.rule .who{display:flex;flex-wrap:wrap;gap:5px;align-content:start}
+.rule .who code{font-size:12px;background:var(--surface-2)}
+.rule .who .fam{font-family:var(--f-sans);font-size:13.5px;font-weight:600;color:var(--ink)}
+.rule .what{font-family:var(--f-sans);font-size:14px;line-height:1.55;color:var(--ink-2);margin:0}
+.rule .what b{color:var(--ink);font-weight:600}
+.rule .what em{font-style:normal;color:var(--caution);font-weight:600}
+
+/* ---------- model group ---------- */
+.mgroup{margin:0 0 18px}
+.mgroup .lbl{font-family:var(--f-sans);font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.mlist{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 4px}
+.mlist code{font-size:12.5px}
+.mlist code.dead{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--stop-rule)}
+
+/* ---------- footer ---------- */
+.foot{border-top:1px solid var(--rule);padding-top:24px;margin-top:8px}
+.foot p{font-family:var(--f-sans);font-size:13px;color:var(--muted);max-width:70ch;margin:0 0 8px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <p class="eyebrow">2026 NIAID AI Codeathon &middot; Participant Guide</p>
+  <h1>Using AI models through Argo</h1>
+  <p class="lede">Argo is Argonne National Laboratory&rsquo;s LLM gateway &mdash; one API in front of frontier models from <b>OpenAI, Anthropic, and Google</b>, plus text embeddings. Access has been arranged for every participant. Two things differ from calling the vendors directly: <b>there are no API keys</b>, and <b>model names are Argo&rsquo;s own short strings</b>.</p>
+</header>
+
+<div class="setup">
+  <div class="field">
+    <label for="uname">Your collaborator username</label>
+    <input id="uname" type="text" value="ac.jdoe" spellcheck="false" autocomplete="off" aria-describedby="unamehint">
+  </div>
+  <p class="hint" id="unamehint">Type it once and every snippet on this page updates, ready to copy. It is remembered in this browser only &mdash; nothing is sent anywhere. On a shared or borrowed machine, use <b>Forget</b> when you finish. <b>Format:</b> bare username, no <code>@anl.gov</code>, no quotes.</p>
+  <button id="uforget" class="forget" type="button">Forget</button>
+</div>
+
+<div class="cols">
+
+  <nav class="toc" aria-label="Contents">
+    <details class="toc-toggle" open>
+      <summary>Contents</summary>
+      <ol id="toclist-m"></ol>
+    </details>
+    <ol id="toclist"></ol>
+  </nav>
+
+  <main>
+
+  <section id="connect">
+    <h2><span class="n">01</span>Get connected</h2>
+    <p class="sub">Three prerequisites. The first one accounts for most failed first attempts.</p>
+
+    <div class="tiles">
+      <div class="tile">
+        <p class="k">Network</p>
+        <h4>Join the codeathon wifi</h4>
+        <p>Argo lives at <code>apps.inside.anl.gov</code>, reachable only from inside Argonne&rsquo;s network. The venue wifi is your path in.</p>
+      </div>
+      <div class="tile">
+        <p class="k">Identity</p>
+        <h4>Know your username</h4>
+        <p>Your Argonne collaborator account, shaped like <code>ac.jdoe</code>. This replaces the API key everywhere.</p>
+      </div>
+      <div class="tile">
+        <p class="k">Verify</p>
+        <h4>Run the smoke test</h4>
+        <p>One curl command proves network and auth together, before you debug anything else.</p>
+      </div>
+    </div>
+
+    <div class="note caution">
+      <span class="tag">Network required</span>
+      <p>Off the codeathon network &mdash; on hotel wifi, a phone hotspot, or a cloud VM &mdash; <b>every call hangs and then times out</b>. A connection timeout almost always means wrong network, not broken code. Check this first, every time.</p>
+    </div>
+
+    <h3>The smoke test</h3>
+    <p>Run this before anything else. A JSON list of model names means you are ready.</p>
+    <div class="code" data-lang="bash"><div class="code-bar"><span class="code-lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code>curl -sS https://apps.inside.anl.gov/argoapi/v1/models \
+  -H "Authorization: Bearer <span class="u">ac.jdoe</span>"</code></pre></div>
+    <p>Anything else, jump to <a href="#trouble">Troubleshooting</a>.</p>
+  </section>
+
+  <hr class="div">
+
+  <section id="data">
+    <h2><span class="n">02</span>What you may send</h2>
+    <p class="sub">Argo is a gateway, not a destination. Your prompt leaves Argonne and is processed by a commercial provider.</p>
+
+    <div class="note caution">
+      <span class="tag">Two hard limits</span>
+      <ul>
+        <li><b>None of these models guarantee secure handling of CUI.</b> Do not put controlled unclassified information through Argo.</li>
+        <li><b>None of them guarantee that your data is processed in the United States.</b> If a dataset carries a data-residency obligation, Argo cannot satisfy it.</li>
+      </ul>
+    </div>
+
+    <p>Beyond those two, your calls are subject to <b>whatever guardrails are in place on the target model</b>. Those are the vendor&rsquo;s, not Argonne&rsquo;s, and they vary by model. A scientifically routine prompt can be refused or flagged &mdash; the Argo maintainers documented a plain code-generation prompt being rejected as a suspected policy violation. When that happens it is the provider&rsquo;s filter, not a problem with your account: rephrase, or try another model family.</p>
+
+    <p><b>In practice.</b> Treat anything you send as having left your institution&rsquo;s control. If data is not yours to publish &mdash; unpublished collaborator results, clinical or personally identifying records, embargoed or otherwise restricted material &mdash; clear it with the data owner before it goes into a prompt. This applies to files as well as to what you type: a coding assistant transmits the contents of the files it reasons about, so the rule covers your working directory, not just the chat box.</p>
+
+    <p>If you are unsure whether something is safe to send, ask the codeathon organizers before you send it, not after.</p>
+  </section>
+
+  <hr class="div">
+
+  <section id="auth">
+    <h2><span class="n">03</span>Authentication</h2>
+    <p class="sub">There is no key to issue or rotate. Your username is the credential &mdash; and it is not a secret.</p>
+    <p>Wherever a client library asks for an API key, supply your username instead.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Client expects</th><th>You supply</th></tr></thead>
+      <tbody>
+        <tr><td><code>api_key</code> / <code>OPENAI_API_KEY</code></td><td><code class="u">ac.jdoe</code></td></tr>
+        <tr><td><code>Authorization</code> header</td><td><code>Bearer <span class="u">ac.jdoe</span></code></td></tr>
+        <tr><td><code>x-api-key</code> (Anthropic style)</td><td><code class="u">ac.jdoe</code></td></tr>
+        <tr><td><code>user</code> field in the body (legacy endpoints)</td><td><code class="u">ac.jdoe</code></td></tr>
+      </tbody>
+    </table></div>
+    <p>Argo validates the username on every call, caching the lookup for 24 hours so long runs don&rsquo;t pay a round-trip each time. Calls are logged against your name for usage accounting. Send the bare username: no email address, no surrounding quotes, no other special characters.</p>
+
+    <div class="note caution">
+      <span class="tag">What this protects, and what it doesn&rsquo;t</span>
+      <p><b>Your username is an identifier, not a secret.</b> There is no key to rotate and nothing to leak, because there is nothing secret in the first place. Usernames appear in email addresses, commit logs and papers &mdash; anyone who can reach the gateway and knows yours can make calls as you.</p>
+      <ul>
+        <li><b>The network is the access control.</b> Argo is protected by being reachable only from inside Argonne, not by your credential. Treat access to the codeathon network as the thing worth protecting.</li>
+        <li><b>Attribution is a claim, not a proof.</b> Usage is recorded against whatever username was sent. Use your own, and only your own.</li>
+        <li><b>A terminal screenshot contains your credential.</b> Harmless among participants on the same network; worth a thought before posting one publicly.</li>
+      </ul>
+      <p>None of this asks anything of you beyond normal account hygiene. It does mean &ldquo;there&rsquo;s no API key&rdquo; should read as <em>simpler</em>, not as <em>safer</em>.</p>
+    </div>
+  </section>
+
+  <hr class="div">
+
+  <section id="endpoints">
+    <h2><span class="n">04</span>Endpoints</h2>
+    <p class="sub">Base URL: apps.inside.anl.gov/argoapi</p>
+    <div class="tw"><table>
+      <thead><tr><th>What you want</th><th>Path</th></tr></thead>
+      <tbody>
+        <tr><td>OpenAI-compatible base URL</td><td><code>/argoapi/v1</code></td></tr>
+        <tr><td>Chat completions (OpenAI style)</td><td><code>/argoapi/v1/chat/completions</code></td></tr>
+        <tr><td>Messages (Anthropic style)</td><td><code>/argoapi/v1/messages</code></td></tr>
+        <tr><td>Embeddings (OpenAI style)</td><td><code>/argoapi/v1/embeddings</code></td></tr>
+        <tr><td>Live model list</td><td><code>/argoapi/v1/models</code></td></tr>
+        <tr><td>Interactive API explorer</td><td><code>/argoapi/docs</code></td></tr>
+        <tr><td>Chat &mdash; Argo legacy format</td><td><code>/argoapi/api/v1/resource/chat/</code></td></tr>
+        <tr><td>Streaming chat &mdash; legacy</td><td><code>/argoapi/api/v1/resource/streamchat/</code></td></tr>
+        <tr><td>Embeddings &mdash; legacy</td><td><code>/argoapi/api/v1/resource/embed/</code></td></tr>
+      </tbody>
+    </table></div>
+    <div class="note">
+      <span class="tag">Use production</span>
+      <p>Point at <code>apps.inside.anl.gov</code>, <b>not</b> <code>apps-dev.inside.anl.gov</code>. The <code>-dev</code> host is an unstable R&amp;D environment that changes without notice. Plenty of older examples still reference it &mdash; drop the <code>-dev</code>.</p>
+    </div>
+    <p>Build on the <code>/v1</code> endpoints. The legacy <code>/api/v1/resource/*</code> paths still work but use a non-standard request shape and return a bare <code>{"response": "&hellip;"}</code> object, so no off-the-shelf client speaks them. The <a href="https://apps.inside.anl.gov/argoapi/docs">Swagger explorer</a> is worth five minutes early on &mdash; you can fire test calls from the browser and see exactly what the gateway accepts.</p>
+  </section>
+
+  <hr class="div">
+
+  <section id="models">
+    <h2><span class="n">05</span>Choosing a model</h2>
+    <p class="sub">Argo uses its own short IDs. Query /v1/models for the live list; this table is a curated starting point.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Use case</th><th>Model ID</th><th>Context / output</th><th></th></tr></thead>
+      <tbody>
+        <tr><td>Best overall, agentic coding</td><td><code>claudeopus5</code></td><td class="num">1M / 128k</td><td><span class="chip go">Recommended</span></td></tr>
+        <tr><td>Strong general work, cheaper</td><td><code>claudesonnet5</code></td><td class="num">&mdash;</td><td><span class="chip go">Recommended</span></td></tr>
+        <tr><td>Long-context general work</td><td><code>claudesonnet46</code></td><td class="num">1M / 64k</td><td><span class="chip ok">Available</span></td></tr>
+        <tr><td>Fast and inexpensive</td><td><code>claudehaiku45</code></td><td class="num">200k / 64k</td><td><span class="chip go">Recommended</span></td></tr>
+        <tr><td>OpenAI frontier</td><td><code>gpt56sol</code></td><td class="num">1.05M / 128k</td><td><span class="chip go">Recommended</span></td></tr>
+        <tr><td>OpenAI balanced (mini tier)</td><td><code>gpt56terra</code></td><td class="num">1.05M / 128k</td><td><span class="chip ok">Available</span></td></tr>
+        <tr><td>OpenAI high volume (nano tier)</td><td><code>gpt56luna</code></td><td class="num">1.05M / 128k</td><td><span class="chip ok">Available</span></td></tr>
+        <tr><td>Google, long context</td><td><code>gemini35flash</code></td><td class="num">1.05M / 64k</td><td><span class="chip ok">Available</span></td></tr>
+        <tr><td>Google, cheapest</td><td><code>gemini31flashlite</code></td><td class="num">1.05M / 64k</td><td><span class="chip ok">Available</span></td></tr>
+        <tr><td>Embeddings, general</td><td><code>text-embedding-3-small</code></td><td class="num">8,191 in / 1,536 d</td><td><span class="chip go">Recommended</span></td></tr>
+        <tr><td>Embeddings, highest quality</td><td><code>text-embedding-3-large</code></td><td class="num">8,191 in / 3,072 d</td><td><span class="chip ok">Available</span></td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>The rest of the catalog</h3>
+    <div class="mgroup">
+      <p class="lbl">Anthropic</p>
+      <div class="mlist"><code>claudeopus48</code><code>claudeopus47</code><code>claudeopus46</code><code>claudeopus45</code><code>claudeopus41</code><code>claudesonnet45</code></div>
+    </div>
+    <div class="mgroup">
+      <p class="lbl">OpenAI</p>
+      <div class="mlist"><code>gpt55</code><code>gpt54</code><code>gpt54mini</code><code>gpt54nano</code><code>gpt52</code><code>gpt51</code><code>gpt5</code><code>gpt5mini</code><code>gpt5nano</code><code>gpt41</code><code>gpt41mini</code><code>gpt41nano</code><code>gpto1</code><code>gpto3</code><code>gpto3mini</code><code>gpto4mini</code><code>gpt4o</code></div>
+    </div>
+    <div class="mgroup">
+      <p class="lbl">Google <span class="chip warn">Sunsetting</span></p>
+      <div class="mlist"><code>gemini25pro</code><code>gemini25flash</code></div>
+    </div>
+    <div class="mgroup">
+      <p class="lbl">Embeddings</p>
+      <div class="mlist"><code>ada002</code><code>v3large</code><code>v3small</code></div>
+    </div>
+    <div class="mgroup">
+      <p class="lbl">Deprecated <span class="chip stop">Do not use</span></p>
+      <div class="mlist"><code class="dead">gpt35</code><code class="dead">gpt35large</code><code class="dead">gpt4</code><code class="dead">gpt4large</code><code class="dead">gpt4turbo</code><code class="dead">gpt4olatest</code><code class="dead">gpto1preview</code><code class="dead">gpto1mini</code><code class="dead">claudeopus4</code><code class="dead">claudesonnet4</code><code class="dead">claudesonnet37</code><code class="dead">claudesonnet35v2</code><code class="dead">claudehaiku35</code></div>
+    </div>
+
+    <div class="note">
+      <span class="tag">Embedding names</span>
+      <p>Embedding models accept either the Argo short name (<code>v3small</code>) or the official OpenAI name (<code>text-embedding-3-small</code>). <b>Prefer the official name with LangChain and LlamaIndex</b> &mdash; those libraries sometimes validate embedding model names client-side and will reject <code>v3small</code> before the request ever leaves your machine.</p>
+    </div>
+  </section>
+
+  <hr class="div">
+
+  <section id="params">
+    <h2><span class="n">06</span>Parameter rules by model</h2>
+    <p class="sub">The single biggest source of lost time. Argo passes your call through to the vendor, so each family&rsquo;s own rules apply.</p>
+
+    <div class="rules">
+      <div class="rule">
+        <div class="who"><code>claudesonnet5</code></div>
+        <p class="what"><em>Rejects <code>temperature</code> at any value but <code>1</code>, and rejects <code>top_p</code> entirely</em>, with a 400: <code>`temperature` is deprecated for this model.</code> It is the only Claude model on Argo that does this. <code>top_k</code> is accepted. Send <code>temperature=1</code>, or nothing at all.</p>
+      </div>
+      <div class="rule">
+        <div class="who"><code>claudeopus5</code><code>claudeopus48</code><code>claudeopus47</code></div>
+        <p class="what">Accept <code>temperature</code> and <code>top_p</code> without complaint, but <b>the values have no effect</b> &mdash; they are stripped before the vendor call, so steer behavior through prompting. <b><code>max_tokens</code> is required.</b> Extended thinking uses the <code>output_config</code> parameter, which Argo passes through.</p>
+      </div>
+      <div class="rule">
+        <div class="who"><code>claudesonnet46</code><code>claudesonnet45</code><code>claudehaiku45</code><code>claudeopus46</code><code>claudeopus45</code><code>claudeopus41</code></div>
+        <p class="what">Accept <code>temperature</code>, <code>top_p</code>, both, or neither. Sending both is not an error &mdash; Argo drops <code>top_p</code> &mdash; but pick one and you get what you asked for. Omit them and Argo defaults to <code>max_tokens=21000</code>, <code>temperature=0.7</code>, <code>top_p=0.9</code>.</p>
+      </div>
+      <div class="rule">
+        <div class="who"><span class="fam">All Anthropic models</span></div>
+        <p class="what">Require <b>non-empty user content</b> &mdash; a system prompt alone, or a whitespace-only user message, errors out (Argo substitutes <code>"[continue]"</code> to avoid this).</p>
+      </div>
+      <div class="rule">
+        <div class="who"><span class="fam">All Anthropic models</span><span class="fam" style="font-weight:400;color:var(--muted)">on <code>/v1/chat/completions</code></span></div>
+        <p class="what"><em>You must send <code>max_tokens</code> explicitly, and keep it at 21,000 or below for non-streaming calls.</em> Argo reads only <code>max_tokens</code> here &mdash; <b><code>max_completion_tokens</code> is silently ignored</b>. Omit the limit, or set it above roughly 21,000, and the call fails with a 500. Stream instead when you need more.</p>
+      </div>
+      <div class="rule">
+        <div class="who"><code>gpt5</code><code>gpt55</code><code>gpt56sol</code><code>gpt56terra</code><code>gpt56luna</code></div>
+        <p class="what"><code>temperature</code> must be exactly <em>1</em>, or omitted. Any other value is a 400: <code>Unsupported value: 'temperature' does not support 0.2 with this model.</code> <code>top_p</code> and <code>max_completion_tokens</code> are fine. <code>gpt41</code>, <code>gpt4o</code>, <code>gpt51</code>, <code>gpt52</code> and <code>gpt54</code> are <b>not</b> affected &mdash; they take any temperature.</p>
+      </div>
+      <div class="rule">
+        <div class="who"><span class="fam">All GPT-5.x</span><code>gpt5</code>&hellip;<code>gpt56*</code></div>
+        <p class="what">On Argo&rsquo;s <code>/v1/chat/completions</code>, <b>either</b> <code>max_tokens</code> or <code>max_completion_tokens</code> works, and omitting both is fine &mdash; Argo normalizes. (OpenAI&rsquo;s own API rejects <code>max_tokens</code> for these models; Argo does not.)</p>
+      </div>
+      <div class="rule">
+        <div class="who"><span class="fam">o-series</span><code>gpto1</code><code>gpto3</code><code>gpto3mini</code><code>gpto4mini</code></div>
+        <p class="what">No <code>temperature</code>, <code>top_p</code> or <code>max_tokens</code>. Use <code>max_completion_tokens</code>.</p>
+      </div>
+      <div class="rule">
+        <div class="who"><span class="fam">Gemini</span></div>
+        <p class="what">Argo maps <code>max_tokens</code> to <code>max_output_tokens</code> and <code>stop</code> to <code>stop_sequences</code> for you. Any <code>temperature</code> is accepted.</p>
+      </div>
+      <div class="rule">
+        <div class="who"><code>gemini35flash</code></div>
+        <p class="what"><em>Give it a generous <code>max_tokens</code> (2,048 or more), or omit it.</em> It spends its output budget on internal reasoning first, so a small limit leaves nothing for the answer and the call dies with a 500: <code>'NoneType' object has no attribute 'parts'</code>. <code>gemini31flashlite</code> and <code>gemini25flash</code> are fine at small limits.</p>
+      </div>
+    </div>
+
+    <p class="sub" style="margin-top:1.25rem">Every rule above was measured against the Argo gateway on 14&nbsp;September&nbsp;2026 by sending the parameter in question to each model and recording the response. Where it contradicts the Argo API notes, trust this table &mdash; the notes predate the newest models.</p>
+
+    <div class="note caution">
+      <span class="tag">The error you will actually hit</span>
+      <p><code>500 &mdash; Streaming is required for operations that may take longer than 10 minutes</code> means exactly the rule above: no <code>max_tokens</code> reached the Anthropic model. It is Anthropic-only &mdash; GPT and Gemini models are unaffected and accept no token limit at all. Verified against Opus 5, Opus 4.5, Sonnet 5, Sonnet 4.6 and Haiku 4.5.</p>
+    </div>
+
+    <h3>Feature availability</h3>
+    <ul>
+      <li><strong>Tool / function calling</strong> &mdash; fully working on the non-streaming chat path for OpenAI, Google and Anthropic models. Disabled on the legacy <code>/streamchat/</code> endpoint, which returns an informational error. Gemini tool calling is the least battle-tested; report breakage.</li>
+      <li><strong>Image input</strong> &mdash; supported on the OpenAI-compatible and Anthropic Messages endpoints for multimodal models. Attach files directly or base64-encode them; <strong>don&rsquo;t pass public web URLs</strong>.</li>
+      <li><strong>Streaming</strong> &mdash; available across models on the streaming paths.</li>
+    </ul>
+  </section>
+
+  <hr class="div">
+
+  <section id="curl">
+    <h2><span class="n">07</span>curl</h2>
+    <p class="sub">Zero dependencies. Good for smoke tests, shell scripts, and proving a problem isn&rsquo;t your Python environment.</p>
+
+    <h3>Chat completion, OpenAI-compatible</h3>
+    <div class="code"><div class="code-bar"><span class="code-lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code>curl -sS https://apps.inside.anl.gov/argoapi/v1/chat/completions \
+  -H "Authorization: Bearer <span class="u">ac.jdoe</span>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claudesonnet5",
+    "messages": [
+      {"role": "system", "content": "You are a concise bioinformatics assistant."},
+      {"role": "user", "content": "In one sentence, what is a pangenome?"}
+    ],
+    "max_tokens": 300
+  }'</code></pre></div>
+
+    <h3>Streaming</h3>
+    <p><code>-N</code> disables curl&rsquo;s output buffering so tokens appear as they arrive.</p>
+    <div class="code"><div class="code-bar"><span class="code-lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code>curl -sS -N https://apps.inside.anl.gov/argoapi/v1/chat/completions \
+  -H "Authorization: Bearer <span class="u">ac.jdoe</span>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claudesonnet5",
+    "messages": [{"role": "user", "content": "Count to five."}],
+    "max_tokens": 100,
+    "stream": true
+  }'</code></pre></div>
+
+    <h3>Anthropic Messages format</h3>
+    <div class="code"><div class="code-bar"><span class="code-lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code>curl -sS https://apps.inside.anl.gov/argoapi/v1/messages \
+  -H "x-api-key: <span class="u">ac.jdoe</span>" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claudeopus5",
+    "max_tokens": 1024,
+    "system": "You are a concise bioinformatics assistant.",
+    "messages": [{"role": "user", "content": "What is a pangenome?"}]
+  }'</code></pre></div>
+
+    <h3>Embeddings</h3>
+    <p><code>input</code> takes a single string or a list, capped at <strong>16 strings per request</strong>. The response is standard OpenAI shape: <code>data[i].embedding</code> holds each vector.</p>
+    <div class="code"><div class="code-bar"><span class="code-lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code>curl -sS https://apps.inside.anl.gov/argoapi/v1/embeddings \
+  -H "Authorization: Bearer <span class="u">ac.jdoe</span>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "text-embedding-3-small",
+    "input": ["first document", "second document"]
+  }'</code></pre></div>
+
+    <h3>A GPT-5.x call, showing the parameter difference</h3>
+    <p>Argo accepts <code>max_tokens</code> here too, despite OpenAI&rsquo;s own API rejecting it for GPT-5.x &mdash; the gateway normalizes. <code>max_completion_tokens</code> is the portable choice.</p>
+    <div class="code"><div class="code-bar"><span class="code-lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code>curl -sS https://apps.inside.anl.gov/argoapi/v1/chat/completions \
+  -H "Authorization: Bearer <span class="u">ac.jdoe</span>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt56sol",
+    "messages": [{"role": "user", "content": "What is a pangenome?"}],
+    "max_completion_tokens": 300
+  }'</code></pre></div>
+  </section>
+
+  <hr class="div">
+
+  <section id="sdks">
+    <h2><span class="n">08</span>Python SDKs</h2>
+    <p class="sub">Both official vendor SDKs work against Argo unmodified. You override the base URL and pass your username where a key would go.</p>
+
+    <div class="tw"><table>
+      <thead><tr><th>Package</th><th>Reaches</th><th>Use it when</th></tr></thead>
+      <tbody>
+        <tr><td><code>openai</code></td><td><strong>Every model Argo offers</strong> &mdash; OpenAI, Anthropic and Google alike</td><td>Default choice, unless you need something Anthropic-specific.</td></tr>
+        <tr><td><code>anthropic</code></td><td><code>claude*</code> models only</td><td>You want the native Anthropic request shape, including <code>output_config</code> for extended thinking on Opus 4.7+.</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="code"><div class="code-bar"><span class="code-lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code>pip install openai anthropic</code></pre></div>
+
+    <h3>OpenAI SDK &mdash; chat</h3>
+    <div class="code"><div class="code-bar"><span class="code-lang">python</span><button class="copy" type="button">Copy</button></div><pre><code>from openai import OpenAI
+
+client = OpenAI(
+    api_key="<span class="u">ac.jdoe</span>",      # your username, not a key
+    base_url="https://apps.inside.anl.gov/argoapi/v1",
+)
+
+resp = client.chat.completions.create(
+    model="claudesonnet5",
+    messages=[
+        {"role": "system", "content": "You are a concise bioinformatics assistant."},
+        {"role": "user", "content": "In one sentence, what is a pangenome?"},
+    ],
+    max_tokens=300,
+)
+
+print(resp.choices[0].message.content)</code></pre></div>
+    <p>Swapping <code>model="gemini35flash"</code> or <code>model="gpt56sol"</code> is the only change needed to move between vendors &mdash; mind the <a href="#params">parameter rules</a> when you do.</p>
+
+    <h3>OpenAI SDK &mdash; streaming</h3>
+    <p>Guard against chunks with an empty <code>choices</code> list &mdash; the final usage chunk has none, and indexing it blindly is the most common way a streaming loop dies one token from the end.</p>
+    <div class="code"><div class="code-bar"><span class="code-lang">python</span><button class="copy" type="button">Copy</button></div><pre><code>from openai import OpenAI
+
+client = OpenAI(
+    api_key="<span class="u">ac.jdoe</span>",      # your username, not a key
+    base_url="https://apps.inside.anl.gov/argoapi/v1",
+)
+
+stream = client.chat.completions.create(
+    model="claudesonnet5",
+    messages=[{"role": "user", "content": "Count to five."}],
+    max_tokens=100,
+    stream=True,
+)
+
+parts = []
+for chunk in stream:
+    if not chunk.choices:          # final usage-only chunk carries no choices
+        continue
+    delta = chunk.choices[0].delta.content
+    if delta:
+        parts.append(delta)
+        print(delta, end="", flush=True)
+
+print()                            # close the line once the stream ends
+full_text = "".join(parts)
+print(f"[{len(full_text)} characters]")</code></pre></div>
+
+    <h3>OpenAI SDK &mdash; tool calling</h3>
+    <p>Use the non-streaming path; tool calling is disabled on the streaming endpoint.</p>
+    <div class="code"><div class="code-bar"><span class="code-lang">python</span><button class="copy" type="button">Copy</button></div><pre><code>from openai import OpenAI
+
+client = OpenAI(api_key="<span class="u">ac.jdoe</span>", base_url="https://apps.inside.anl.gov/argoapi/v1")
+
+tools = [{
+    "type": "function",
+    "function": {
+        "name": "lookup_genome",
+        "description": "Look up a genome record in BV-BRC by its genome ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "genome_id": {
+                    "type": "string",
+                    "description": "BV-BRC genome identifier, e.g. 83332.12",
+                },
+            },
+            "required": ["genome_id"],
+        },
+    },
+}]
+
+resp = client.chat.completions.create(
+    model="claudesonnet5",
+    messages=[{"role": "user", "content": "Look up genome 83332.12 for me."}],
+    tools=tools,
+    max_tokens=500,
+)
+
+call = resp.choices[0].message.tool_calls[0]
+print(call.function.name)        # lookup_genome
+print(call.function.arguments)   # {"genome_id": "83332.12"}</code></pre></div>
+    <p>Argo translates this standard OpenAI tool schema into each vendor&rsquo;s native format, so the same code works against Anthropic and Google models.</p>
+
+    <h3>OpenAI SDK &mdash; embeddings</h3>
+    <p>Batches are capped at <strong>16 strings per request</strong>. Chunk longer lists yourself.</p>
+    <div class="code"><div class="code-bar"><span class="code-lang">python</span><button class="copy" type="button">Copy</button></div><pre><code>from openai import OpenAI
+
+client = OpenAI(api_key="<span class="u">ac.jdoe</span>", base_url="https://apps.inside.anl.gov/argoapi/v1")
+
+resp = client.embeddings.create(
+    model="text-embedding-3-small",
+    input=["first document", "second document"],
+)
+
+for item in resp.data:
+    print(item.index, len(item.embedding))   # 0 1536 / 1 1536</code></pre></div>
+
+    <h3>OpenAI SDK &mdash; a GPT-5.x call</h3>
+    <div class="code"><div class="code-bar"><span class="code-lang">python</span><button class="copy" type="button">Copy</button></div><pre><code>from openai import OpenAI
+
+client = OpenAI(api_key="<span class="u">ac.jdoe</span>", base_url="https://apps.inside.anl.gov/argoapi/v1")
+
+resp = client.chat.completions.create(
+    model="gpt56sol",
+    messages=[{"role": "user", "content": "What is a pangenome?"}],
+    max_completion_tokens=300,   # portable; Argo also accepts max_tokens here
+)
+
+print(resp.choices[0].message.content)</code></pre></div>
+
+    <h3>Anthropic SDK &mdash; messages</h3>
+    <p>Note the base URL here has <strong>no <code>/v1</code></strong>. The Anthropic client appends its own path.</p>
+    <div class="code"><div class="code-bar"><span class="code-lang">python</span><button class="copy" type="button">Copy</button></div><pre><code>from anthropic import Anthropic
+
+client = Anthropic(
+    api_key="<span class="u">ac.jdoe</span>",      # your username, not a key
+    base_url="https://apps.inside.anl.gov/argoapi",
+)
+
+msg = client.messages.create(
+    model="claudeopus5",
+    max_tokens=1024,
+    system="You are a concise bioinformatics assistant.",
+    messages=[{"role": "user", "content": "What is a pangenome?"}],
+)
+
+# claudeopus5 has extended thinking on by default, so content[0] is a
+# ThinkingBlock, not text. Join every text block instead of indexing.
+print("".join(b.text for b in msg.content if b.type == "text"))</code></pre></div>
+    <div class="note caution">
+      <span class="tag">Thinking blocks</span>
+      <p><code>claudeopus5</code> returns a <code>thinking</code> block <em>before</em> its <code>text</code> block &mdash; extended thinking is on by default for that model on Argo. Indexing <code>msg.content[0].text</code> raises <code>AttributeError: 'ThinkingBlock' object has no attribute 'text'</code>. Filter by block type, as above. Every other Claude model on Argo returns text alone, but the filter is correct for all of them, so write it that way from the start.</p>
+    </div>
+
+    <p><code>max_tokens</code> is required by the Anthropic API and by Argo. <code>temperature</code> and <code>top_p</code> are silently discarded by Opus 4.7+, and <code>claudesonnet5</code> rejects both outright unless <code>temperature</code> is exactly <code>1</code> &mdash; see &sect;6.</p>
+
+    <h3>Anthropic SDK &mdash; streaming</h3>
+    <p><code>text_stream</code> yields text deltas only. Call <code>get_final_message()</code> inside the context manager if you also need the stop reason, token usage, or tool calls.</p>
+    <div class="code"><div class="code-bar"><span class="code-lang">python</span><button class="copy" type="button">Copy</button></div><pre><code>from anthropic import Anthropic
+
+client = Anthropic(
+    api_key="<span class="u">ac.jdoe</span>",      # your username, not a key
+    base_url="https://apps.inside.anl.gov/argoapi",
+)
+
+with client.messages.stream(
+    model="claudeopus5",
+    max_tokens=1024,
+    messages=[{"role": "user", "content": "Count to five."}],
+) as stream:
+    for text in stream.text_stream:
+        print(text, end="", flush=True)
+
+    final = stream.get_final_message()   # call inside the context manager
+
+print()
+print(f"[{final.stop_reason}] {final.usage.output_tokens} output tokens")</code></pre></div>
+    <p>Streaming is also how you get past the <strong>21,000 output token ceiling</strong> on Anthropic models &mdash; above that, non-streaming calls truncate.</p>
+  </section>
+
+  <hr class="div">
+
+  <section id="frameworks">
+    <h2><span class="n">09</span>LangChain and LlamaIndex</h2>
+    <p class="sub">You are configuring each library&rsquo;s OpenAI integration and pointing it at Argo &mdash; even when the model behind it is Claude or Gemini.</p>
+
+    <h3>Setup</h3>
+    <div class="code"><div class="code-bar"><span class="code-lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code>pip install langchain langchain-openai
+# or
+pip install llama-index llama-index-llms-openai-like llama-index-embeddings-openai
+
+export OPENAI_API_KEY=<span class="u">ac.jdoe</span>
+export OPENAI_BASE_URL=https://apps.inside.anl.gov/argoapi/v1</code></pre></div>
+    <p>Setting the environment variables keeps credentials out of your source and means most examples from the LangChain docs work unmodified.</p>
+
+    <h3>LangChain &mdash; chat</h3>
+    <div class="code"><div class="code-bar"><span class="code-lang">python</span><button class="copy" type="button">Copy</button></div><pre><code>from langchain_openai import ChatOpenAI
+
+llm = ChatOpenAI(
+    model="claudesonnet5",
+    base_url="https://apps.inside.anl.gov/argoapi/v1",
+    api_key="<span class="u">ac.jdoe</span>",   # your username, not a key
+    temperature=1,         # the one value every Argo model accepts
+    # Argo reads only max_tokens for Claude models, and recent langchain-openai
+    # puts max_completion_tokens on the wire instead. Force the field Argo reads.
+    extra_body={"max_tokens": 1024},
+)
+
+print(llm.invoke("In one sentence, what is a pangenome?").content)</code></pre></div>
+
+    <h3>LangChain &mdash; embeddings and a minimal index</h3>
+    <div class="code"><div class="code-bar"><span class="code-lang">python</span><button class="copy" type="button">Copy</button></div><pre><code>from langchain_openai import OpenAIEmbeddings
+from langchain_core.vectorstores import InMemoryVectorStore
+
+embeddings = OpenAIEmbeddings(
+    model="text-embedding-3-small",   # official name, see section 05
+    base_url="https://apps.inside.anl.gov/argoapi/v1",
+    api_key="<span class="u">ac.jdoe</span>",
+    <span class="c"># langchain-openai pre-tokenizes text and sends token-ID arrays,</span>
+    <span class="c"># which Argo rejects with a 422. This sends plain strings instead.</span>
+    check_embedding_ctx_length=False,
+)
+
+docs = [
+    "Klebsiella pneumoniae is a Gram-negative bacterium.",
+    "BV-BRC provides genomic data and analysis tools for bacterial pathogens.",
+]
+
+<span class="c"># InMemoryVectorStore ships with langchain-core: no extra dependency and no</span>
+<span class="c"># sunset warning. For a bigger index swap in FAISS (pip install langchain-community</span>
+<span class="c"># faiss-cpu) &mdash; same from_texts/similarity_search API.</span>
+store = InMemoryVectorStore.from_texts(docs, embeddings)
+print(store.similarity_search("What is BV-BRC?", k=1)[0].page_content)</code></pre></div>
+
+    <h3>LlamaIndex</h3>
+    <p>Use <code>OpenAILike</code>, not <code>OpenAI</code>. The stock <code>OpenAI</code> class checks model names against a hardcoded list and will reject <code>claudesonnet5</code>.</p>
+    <div class="code"><div class="code-bar"><span class="code-lang">python</span><button class="copy" type="button">Copy</button></div><pre><code>from llama_index.llms.openai_like import OpenAILike
+from llama_index.embeddings.openai import OpenAIEmbedding
+
+llm = OpenAILike(
+    model="claudesonnet5",
+    api_base="https://apps.inside.anl.gov/argoapi/v1",
+    api_key="<span class="u">ac.jdoe</span>",
+    is_chat_model=True,    # required, or LlamaIndex uses the completions API
+    context_window=200000,
+    max_tokens=1024,
+)
+
+embed_model = OpenAIEmbedding(
+    model_name="text-embedding-3-small",
+    api_base="https://apps.inside.anl.gov/argoapi/v1",
+    api_key="<span class="u">ac.jdoe</span>",
+)
+
+print(llm.complete("In one sentence, what is a pangenome?"))</code></pre></div>
+
+    <h3>Framework caveats</h3>
+    <p>These trip people up because the framework sends parameters you never wrote:</p>
+    <ul>
+      <li><strong>Default temperature.</strong> Frameworks send a temperature you didn&rsquo;t write: <code>ChatOpenAI</code> has historically defaulted to <code>0.7</code>, and LlamaIndex&rsquo;s <code>OpenAILike</code> defaults to <code>0.1</code>. Both are rejected by <code>claudesonnet5</code> and by <code>gpt5</code>/<code>gpt55</code>/<code>gpt56*</code>. <b>Set <code>temperature=1</code> explicitly</b> &mdash; every model on Argo accepts it, and writing it out stops the framework substituting its own default. Deleting the argument is <em>not</em> equivalent.</li>
+      <li><strong><code>max_tokens</code> vs <code>max_completion_tokens</code>.</strong> Recent <code>langchain-openai</code> sends <code>max_completion_tokens</code> on the wire even when you write <code>max_tokens=...</code>. Argo ignores that field for Claude models, so the call arrives with no limit and fails. Force the field Argo reads with <code>extra_body={"max_tokens": 1024}</code> (older versions: <code>model_kwargs={"max_tokens": 1024}</code>). GPT and Gemini models need no workaround.</li>
+      <li><strong><code>top_p</code> on <code>claudesonnet5</code> is a hard error</strong>, not a silently-dropped parameter. Other Claude models accept both <code>temperature</code> and <code>top_p</code> and quietly drop <code>top_p</code>; <code>claudesonnet5</code> returns a 400.</li>
+      <li><strong>Embeddings are sent as token arrays.</strong> <code>OpenAIEmbeddings</code> tokenizes your text client-side and posts token-ID arrays, which Argo rejects with <code>422 &mdash; Input should be a valid string</code>. Pass <code>check_embedding_ctx_length=False</code> to send plain strings. That also disables LangChain&rsquo;s automatic chunking of over-long inputs, so split documents yourself (a text splitter) and keep each chunk under the model&rsquo;s 8,191-token limit. LlamaIndex&rsquo;s <code>OpenAIEmbedding</code> sends strings already and needs no flag.</li>
+      <li><strong>tiktoken warnings.</strong> Token-counting helpers don&rsquo;t recognize Argo model IDs and may fall back to a default encoding. Harmless; silence it with <code>tiktoken_model_name="gpt-4o"</code> if it&rsquo;s noisy.</li>
+      <li><strong>Structured output and tool calling</strong> go through the standard OpenAI tool schema, which Argo translates to each vendor&rsquo;s native format. Anthropic and OpenAI models are solid here; Gemini is the least tested.</li>
+    </ul>
+  </section>
+
+  <hr class="div">
+
+  <section id="agents">
+    <h2><span class="n">10</span>AI coding assistants</h2>
+    <p class="sub">Any tool that speaks the OpenAI or Anthropic wire format works. Override the base URL, use your username where it asks for a key.</p>
+
+    <div class="note">
+      <span class="tag">Authoritative source</span>
+      <p>Argonne maintains a dedicated <b>Vibe Coding with Argo</b> guide with per-tool setup and maintained config templates: <a href="https://anl.box.com/s/hxc72dkm0a8mlmo7ownfl4ixwx6iu3ko">anl.box.com/s/hxc72dkm0a8mlmo7ownfl4ixwx6iu3ko</a>. Treat it as authoritative where it disagrees with the settings below.</p>
+    </div>
+
+    <div class="note caution">
+      <span class="tag">Before you point an agent at Argo</span>
+      <p><b>The variable is named like a secret but holds your username.</b> Tools read <code>ANTHROPIC_AUTH_TOKEN</code> or <code>OPENAI_API_KEY</code>; against Argo you put <code class="u">ac.jdoe</code> there. The value lands in your shell history and any rc file you add it to, and the name invites you to later paste a <em>real</em> vendor API key into the same variable. Keep these exports in a per-project file you source (as in <code>examples/agents/</code>), not in <code>~/.bashrc</code>, and don&rsquo;t commit them.</p>
+      <p><b>Coding agents run commands and edit files.</b> Claude Code, Aider and Continue act on your machine with your permissions, and they act on text they read from the repository &mdash; so a file in a checkout you didn&rsquo;t write can influence what the agent does. Point them at your codeathon workspace, not a personal or privileged checkout, and read what they propose before approving it.</p>
+    </div>
+
+    <h3>Claude Code</h3>
+    <p>Points at Argo&rsquo;s Anthropic Messages endpoint. Note the base URL has <strong>no <code>/v1</code></strong> &mdash; the Anthropic client appends its own path. Sending background tasks to Haiku keeps them cheap.</p>
+    <div class="code"><div class="code-bar"><span class="code-lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code>export ANTHROPIC_BASE_URL=https://apps.inside.anl.gov/argoapi
+export ANTHROPIC_AUTH_TOKEN=<span class="u">ac.jdoe</span>
+export ANTHROPIC_MODEL=claudeopus5
+export ANTHROPIC_SMALL_FAST_MODEL=claudehaiku45
+claude</code></pre></div>
+
+    <h3>Continue.dev &mdash; VS Code and JetBrains</h3>
+    <p>In <code>~/.continue/config.yaml</code>. Argonne maintains an up-to-date template in the Vibe Coding guide; prefer that over hand-rolling.</p>
+    <div class="code"><div class="code-bar"><span class="code-lang">yaml</span><button class="copy" type="button">Copy</button></div><pre><code>models:
+  - name: Claude Opus 5 (Argo)
+    provider: openai
+    model: claudeopus5
+    apiBase: https://apps.inside.anl.gov/argoapi/v1
+    apiKey: <span class="u">ac.jdoe</span>
+    roles: [chat, edit, apply]
+
+  - name: Claude Haiku 4.5 (Argo)
+    provider: openai
+    model: claudehaiku45
+    apiBase: https://apps.inside.anl.gov/argoapi/v1
+    apiKey: <span class="u">ac.jdoe</span>
+    roles: [autocomplete]</code></pre></div>
+
+    <h3>Kilo Code, Cline, Roo Code</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>API Provider</td><td><code>OpenAI Compatible</code></td></tr>
+        <tr><td>Base URL</td><td><code>https://apps.inside.anl.gov/argoapi/v1</code></td></tr>
+        <tr><td>API Key</td><td><code class="u">ac.jdoe</code></td></tr>
+        <tr><td>Model ID</td><td><code>claudeopus5</code> &mdash; type it manually, the list may not autopopulate</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>aider</h3>
+    <div class="code"><div class="code-bar"><span class="code-lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code>export OPENAI_API_BASE=https://apps.inside.anl.gov/argoapi/v1
+export OPENAI_API_KEY=<span class="u">ac.jdoe</span>
+aider --model openai/claudesonnet5</code></pre></div>
+
+    <h3>A note on argo-proxy</h3>
+    <p>Several Argo examples reference <code>argo-proxy</code>, a local process that exposes an OpenAI-compatible endpoint in front of Argo. It predates Argo&rsquo;s native OpenAI compatibility and is still handy for tools that are fussy about endpoint behavior, but it is <strong>not required</strong> &mdash; native <code>/v1</code> support covers most cases. Ask the organizers if a tool only works through it.</p>
+  </section>
+
+  <hr class="div">
+
+  <section id="trouble">
+    <h2><span class="n">11</span>Troubleshooting</h2>
+    <p class="sub">Symptom, cause, fix. Most first-day problems are the first two rows.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr><td>Connection hangs, then times out</td><td>Not on the Argonne network</td><td>Join the codeathon wifi, then re-run the smoke test in section 01.</td></tr>
+        <tr><td>Username validation error</td><td>Malformed username</td><td>Bare username only. No <code>@anl.gov</code>, no quotes, no special characters.</td></tr>
+        <tr><td>Error listing valid model names</td><td>Bad <code>model</code> value</td><td>Use an Argo ID from section 05. Vendor names like <code>claude-opus-5</code> are not accepted.</td></tr>
+        <tr><td>Error mentioning <code>max_tokens</code></td><td>o-series model</td><td>Use <code>max_completion_tokens</code>. GPT-5.x on Argo accepts either.</td></tr>
+        <tr><td><code>400</code> &mdash; <code>`temperature` is deprecated for this model.</code></td><td><code>claudesonnet5</code> with any <code>temperature</code> but <code>1</code></td><td>Set <code>temperature=1</code>, or drop the parameter. A framework may be injecting its own default &mdash; set it explicitly rather than deleting it.</td></tr>
+        <tr><td><code>400</code> &mdash; <code>`top_p` is deprecated for this model.</code></td><td><code>claudesonnet5</code> with <code>top_p</code></td><td><code>claudesonnet5</code> takes no <code>top_p</code> at all. Remove it; <code>top_k</code> works if you need it.</td></tr>
+        <tr><td><code>400</code> &mdash; <code>Unsupported value: 'temperature' does not support &hellip;</code></td><td><code>gpt5</code>, <code>gpt55</code> or a <code>gpt56*</code> model</td><td><code>temperature</code> must be exactly <code>1</code>, or omitted.</td></tr>
+        <tr><td><code>500</code> &mdash; <code>'NoneType' object has no attribute 'parts'</code></td><td><code>gemini35flash</code> with a small <code>max_tokens</code></td><td>Raise <code>max_tokens</code> to 2,048+ or omit it. Reasoning consumed the whole budget, leaving no answer.</td></tr>
+        <tr><td>Empty or errored Anthropic response</td><td>No user content</td><td>Anthropic models need a non-empty user message; a system prompt alone won&rsquo;t do.</td></tr>
+        <tr><td><code>500</code> &ldquo;Streaming is required for operations that may take longer than 10 minutes&rdquo;</td><td>No <code>max_tokens</code> reached an Anthropic model &mdash; omitted, above ~21,000, or sent as <code>max_completion_tokens</code>, which Argo ignores</td><td>Pass <code>max_tokens</code> &le; 21,000 explicitly. From LangChain use <code>extra_body={"max_tokens": 1024}</code>. Stream if you need more output.</td></tr>
+        <tr><td><code>AttributeError: 'ThinkingBlock' object has no attribute 'text'</code></td><td><code>claudeopus5</code> returned a thinking block first</td><td>Don&rsquo;t index <code>content[0]</code>. Use <code>"".join(b.text for b in msg.content if b.type == "text")</code>.</td></tr>
+        <tr><td><code>ModuleNotFoundError: No module named 'llama_index.llms.openai_like'</code></td><td><code>llama-index</code> is a meta-package; adapters ship separately</td><td><code>pip install llama-index-llms-openai-like</code>. Same pattern for other LlamaIndex integrations.</td></tr>
+        <tr><td><code>422</code> &mdash; <code>Input should be a valid string</code> on <code>/v1/embeddings</code></td><td>LangChain sent pre-tokenized token-ID arrays</td><td>Set <code>check_embedding_ctx_length=False</code> on <code>OpenAIEmbeddings</code>, and chunk long documents yourself.</td></tr>
+        <tr><td><code>400</code> &mdash; prompt <em>flagged as potentially violating our usage policy</em></td><td>The target vendor&rsquo;s content filter, not Argo</td><td>Rephrase, or try another model family. See section 02.</td></tr>
+        <tr><td>Tool calling fails on a streaming call</td><td>Documented limitation</td><td>Use the non-streaming chat path for tool calling.</td></tr>
+        <tr><td>Sampling parameters seem ignored on Opus 4.7/4.8/5</td><td>Working as designed</td><td>Those models accept the parameters and then strip them. Steer with prompting.</td></tr>
+      </tbody>
+    </table></div>
+    <p>When something looks like a gateway bug rather than your code, capture the full request and the full error text before reporting it. That is what makes it fixable.</p>
+  </section>
+
+  <hr class="div">
+
+  <section id="etiquette">
+    <h2><span class="n">12</span>Usage etiquette</h2>
+    <p class="sub">Every call costs real money against Argonne&rsquo;s account, and usage is attributed to your username.</p>
+    <ul>
+      <li><strong>Prototype on cheap models.</strong> <code>claudehaiku45</code>, <code>gpt56luna</code> and <code>gemini31flashlite</code> are fast and inexpensive. Move up to <code>claudeopus5</code> or <code>gpt56sol</code> once the logic works.</li>
+      <li><strong>Cap your output.</strong> Always set <code>max_tokens</code> or <code>max_completion_tokens</code>.</li>
+      <li><strong>Watch your loops.</strong> An agent loop with a bug can burn a surprising amount in minutes. Add an iteration ceiling before you walk away from it.</li>
+      <li><strong>Coordinate bulk runs.</strong> Argo asks that large or long-running automated jobs be flagged in advance. If your project involves embedding or summarizing a large corpus, tell the organizers before you launch it &mdash; they will clear it with the Argo team if needed.</li>
+    </ul>
+  </section>
+
+  <hr class="div">
+
+  <section id="help">
+    <h2><span class="n">13</span>Getting help</h2>
+    <div class="tw"><table>
+      <tbody>
+        <tr><td><strong>Codeathon organizers</strong></td><td>First stop for access, accounts, and network issues</td></tr>
+        <tr><td><strong>Interactive API explorer</strong></td><td><a href="https://apps.inside.anl.gov/argoapi/docs">apps.inside.anl.gov/argoapi/docs</a></td></tr>
+        <tr><td><strong>Live model list</strong></td><td><code>GET /argoapi/v1/models</code></td></tr>
+        <tr><td><strong>Argo API Community of Practice</strong></td><td>Internal Teams channel &mdash; ask the organizers about joining</td></tr>
+        <tr><td><strong>Vibe Coding with Argo</strong></td><td><a href="https://anl.box.com/s/hxc72dkm0a8mlmo7ownfl4ixwx6iu3ko">anl.box.com/s/hxc72dkm0a8mlmo7ownfl4ixwx6iu3ko</a></td></tr>
+      </tbody>
+    </table></div>
+    <div class="foot">
+      <p>Model lists and parameter rules are drawn from the Argo API Documentation dated <strong>August 3, 2026</strong>. Argo adds models frequently &mdash; <code>GET /v1/models</code> is always the current source of truth.</p>
+    </div>
+  </section>
+
+  </main>
+</div>
+</div>
+
+<script>
+(function(){
+  // --- table of contents -------------------------------------------------
+  var secs = Array.prototype.slice.call(document.querySelectorAll("main section"));
+  var lists = [document.getElementById("toclist"), document.getElementById("toclist-m")];
+  var links = [];
+  secs.forEach(function(s){
+    var h = s.querySelector("h2");
+    var num = h.querySelector(".n").textContent;
+    var label = h.textContent.replace(num, "").trim();
+    lists.forEach(function(list){
+      if(!list) return;
+      var li = document.createElement("li");
+      var a = document.createElement("a");
+      a.href = "#" + s.id;
+      a.innerHTML = '<span class="n">' + num + '</span>' + label;
+      a.dataset.target = s.id;
+      li.appendChild(a); list.appendChild(li); links.push(a);
+    });
+  });
+
+  if("IntersectionObserver" in window){
+    var current = null;
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if(e.isIntersecting) current = e.target.id; });
+      links.forEach(function(a){ a.classList.toggle("on", a.dataset.target === current); });
+    }, {rootMargin: "-10% 0px -70% 0px"});
+    secs.forEach(function(s){ io.observe(s); });
+  }
+
+  // --- username substitution --------------------------------------------
+  var input = document.getElementById("uname");
+  var slots = document.querySelectorAll(".u");
+  function applyName(v){
+    var name = (v || "").trim() || "ac.jdoe";
+    slots.forEach(function(el){ el.textContent = name; });
+  }
+  try{
+    var saved = localStorage.getItem("argo-username");
+    if(saved){ input.value = saved; applyName(saved); }
+  }catch(e){}
+  input.addEventListener("input", function(){
+    applyName(input.value);
+    try{ localStorage.setItem("argo-username", input.value); }catch(e){}
+  });
+  input.addEventListener("focus", function(){ input.select(); });
+  var forget = document.getElementById("uforget");
+  if(forget){
+    forget.addEventListener("click", function(){
+      try{ localStorage.removeItem("argo-username"); }catch(e){}
+      input.value = "";
+      applyName("");
+      forget.textContent = "Forgotten";
+      setTimeout(function(){ forget.textContent = "Forget"; }, 1600);
+      input.focus();
+    });
+  }
+
+  // --- copy buttons -------------------------------------------------------
+  document.querySelectorAll(".copy").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var text = btn.closest(".code").querySelector("pre code").innerText;
+      var done = function(){
+        btn.textContent = "Copied"; btn.classList.add("done");
+        setTimeout(function(){ btn.textContent = "Copy"; btn.classList.remove("done"); }, 1600);
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done, function(){ btn.textContent = "Select manually"; });
+      } else {
+        btn.textContent = "Select manually";
+      }
+    });
+  });
+})();
+</script>

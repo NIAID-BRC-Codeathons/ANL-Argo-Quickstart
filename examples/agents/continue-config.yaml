@@ -1,0 +1,25 @@
+# Continue.dev model config for Argo.
+# Copy into ~/.continue/config.yaml and replace ac.jdoe with your username.
+# Argonne maintains a canonical template in the Vibe Coding with Argo guide;
+# prefer that if it is newer than this file.
+#
+# Note: apiKey below is named like a secret but holds your username. ~/.continue/
+# config.yaml is a real config file -- don't commit it, and remember the same field
+# is where a real vendor API key would go later. Continue edits files and can run
+# commands with your permissions, and acts on text it reads from the repo: use a
+# codeathon workspace, not a privileged checkout.
+
+models:
+  - name: Claude Opus 5 (Argo)
+    provider: openai
+    model: claudeopus5
+    apiBase: https://apps.inside.anl.gov/argoapi/v1
+    apiKey: ac.jdoe
+    roles: [chat, edit, apply]
+
+  - name: Claude Haiku 4.5 (Argo)
+    provider: openai
+    model: claudehaiku45
+    apiBase: https://apps.inside.anl.gov/argoapi/v1
+    apiKey: ac.jdoe
+    roles: [autocomplete]

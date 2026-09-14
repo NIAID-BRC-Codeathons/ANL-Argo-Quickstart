@@ -1,0 +1,8 @@
+langchain
+langchain-openai
+# only needed if you swap InMemoryVectorStore for FAISS in 02-langchain-embeddings.py
+# langchain-community
+# faiss-cpu
+llama-index
+llama-index-llms-openai-like
+llama-index-embeddings-openai
