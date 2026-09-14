@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Argonne-internal source material — do not publish
+Argo API Documentation.html
+Argo Generative AI FAQ.pdf
