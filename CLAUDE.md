@@ -90,7 +90,10 @@ contradict it. Raise a proposed change with the coordinators instead.
 
 ## Housekeeping
 
-- `<CODEATHON-WIFI-SSID>` is still a placeholder in `README.md`, in two places.
+- The network is **`Argonne-auth`**. Collaborators log in with their `ac.` username
+  and the domain password they set up; Argonne staff use normal credentials. Keep the
+  distinction the docs draw between that password (network only, never in a script)
+  and the username (the entire Argo credential) — conflating them is the easy mistake.
 - `Argo API Documentation.html` is Argonne-internal and gitignored. Keep it that way.
 - Argonne links behind SSO or Box are not useful to external participants — most will
   not be able to open them. Point at the organizers instead.

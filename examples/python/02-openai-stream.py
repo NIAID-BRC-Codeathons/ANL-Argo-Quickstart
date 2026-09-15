@@ -7,7 +7,7 @@ Install:
 Run:
     ARGO_USER=ac.yourname python3 02-openai-stream.py
 
-Requires a connection to the codeathon network.
+Requires a connection to the Argonne-auth network.
 """
 import os
 
