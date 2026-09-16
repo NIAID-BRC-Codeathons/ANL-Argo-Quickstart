@@ -4,7 +4,7 @@
 #   export ARGO_USER=ac.yourname
 #   ./05-gpt5x.sh
 #
-# Requires a connection to the codeathon network.
+# Requires a connection to the Argonne-auth network.
 set -euo pipefail
 : "${ARGO_USER:?Set ARGO_USER to your Argonne collaborator username, e.g. ac.jdoe}"
 

@@ -189,8 +189,8 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap;font-family:var(--f-
     <div class="tiles">
       <div class="tile">
         <p class="k">Network</p>
-        <h4>Join the codeathon wifi</h4>
-        <p>Argo lives at <code>apps.inside.anl.gov</code>, reachable only from inside Argonne&rsquo;s network. The venue wifi is your path in.</p>
+        <h4>Join <code>Argonne-auth</code></h4>
+        <p>Log in with your <code>ac.</code> username and your domain password. Argo lives at <code>apps.inside.anl.gov</code>, reachable only from inside Argonne&rsquo;s network.</p>
       </div>
       <div class="tile">
         <p class="k">Identity</p>
@@ -206,7 +206,8 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap;font-family:var(--f-
 
     <div class="note caution">
       <span class="tag">Network required</span>
-      <p>Off the codeathon network &mdash; on hotel wifi, a phone hotspot, or a cloud VM &mdash; <b>every call hangs and then times out</b>. A connection timeout almost always means wrong network, not broken code. Check this first, every time.</p>
+      <p>Off <code>Argonne-auth</code> &mdash; on hotel wifi, a phone hotspot, or a cloud VM &mdash; <b>every call hangs and then times out</b>. A connection timeout almost always means wrong network, not broken code. Check this first, every time.</p>
+      <p><b>Your domain password gets you onto the network and nothing else.</b> It is not part of any Argo call &mdash; the API authenticates on your username alone. Never put it in a script, a config file, or an environment variable.</p>
     </div>
 
     <h3>The smoke test</h3>
@@ -262,7 +263,7 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap;font-family:var(--f-
       <span class="tag">What this protects, and what it doesn&rsquo;t</span>
       <p><b>Your username is an identifier, not a secret.</b> There is no key to rotate and nothing to leak, because there is nothing secret in the first place. Usernames appear in email addresses, commit logs and papers &mdash; anyone who can reach the gateway and knows yours can make calls as you.</p>
       <ul>
-        <li><b>The network is the access control.</b> Argo is protected by being reachable only from inside Argonne, not by your credential. Treat access to the codeathon network as the thing worth protecting.</li>
+        <li><b>The network is the access control.</b> Argo is protected by being reachable only from inside Argonne, not by your credential. The thing actually worth protecting is your domain password, because that is what puts you on <code>Argonne-auth</code>.</li>
         <li><b>Attribution is a claim, not a proof.</b> Usage is recorded against whatever username was sent. Use your own, and only your own.</li>
         <li><b>A terminal screenshot contains your credential.</b> Harmless among participants on the same network; worth a thought before posting one publicly.</li>
       </ul>
@@ -811,7 +812,7 @@ aider --model openai/claudesonnet5</code></pre></div>
     <div class="tw"><table>
       <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
       <tbody>
-        <tr><td>Connection hangs, then times out</td><td>Not on the Argonne network</td><td>Join the codeathon wifi, then re-run the smoke test in section 01.</td></tr>
+        <tr><td>Connection hangs, then times out</td><td>Not on the Argonne network</td><td>Join <code>Argonne-auth</code>, then re-run the smoke test in section 01.</td></tr>
         <tr><td>Username validation error</td><td>Malformed username</td><td>Bare username only. No <code>@anl.gov</code>, no quotes, no special characters.</td></tr>
         <tr><td>Error listing valid model names</td><td>Bad <code>model</code> value</td><td>Use an Argo ID from section 05. Vendor names like <code>claude-opus-5</code> are not accepted.</td></tr>
         <tr><td>Error mentioning <code>max_tokens</code></td><td>o-series model</td><td>Use <code>max_completion_tokens</code>. GPT-5.x on Argo accepts either.</td></tr>

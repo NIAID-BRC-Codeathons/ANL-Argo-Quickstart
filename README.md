@@ -61,13 +61,22 @@ locally, or publish it with GitHub Pages if you want a link to hand out.
 
 ## 1. Before your first call
 
-**Connect to the codeathon wifi network (`<CODEATHON-WIFI-SSID>`).**
+**Connect to the `Argonne-auth` wireless network.**
+
+Log in with your collaborator username — `ac.jdoe` — and the domain password you set
+up when your account was created. Argonne staff connect to `Argonne-auth` with their
+normal credentials.
 
 This is important and easy to forget. Argo lives at `apps.inside.anl.gov`, which is
-only reachable from inside Argonne's network. The codeathon wifi is your path in.
-Off that network — on hotel wifi, a phone hotspot, or a cloud VM — **every call will
-hang and time out**. A connection timeout almost always means "wrong network," not
-"broken code."
+only reachable from inside Argonne's network. `Argonne-auth` is your path in. Off that
+network — on hotel wifi, a phone hotspot, or a cloud VM — **every call will hang and
+time out**. A connection timeout almost always means "wrong network," not "broken
+code."
+
+> **Your domain password gets you onto the network and nothing else.** It is not part
+> of any Argo call — the API authenticates on your username alone. If an example or a
+> tool ever seems to want a password, it is misconfigured. Never put your domain
+> password in a script, a config file, or an environment variable.
 
 **Know your username.** It looks like `ac.jdoe`. You need the bare username:
 
@@ -158,8 +167,8 @@ knows your username can make calls as you.
 What follows from that:
 
 - **The network is the access control.** Argo is protected by being reachable only
-  from inside Argonne, not by your credential. Treat access to the codeathon network
-  as the thing worth protecting.
+  from inside Argonne, not by your credential. The thing actually worth protecting is
+  your domain password, because that is what puts you on `Argonne-auth`.
 - **Attribution is a claim, not a proof.** Usage is recorded against whatever username
   was sent. Use your own, and only your own.
 - **A terminal screenshot contains your credential.** Harmless among participants on
@@ -822,7 +831,7 @@ Ask the organizers if a tool only works through it.
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| Connection hangs, then times out | Not on the Argonne network | Connect to `<CODEATHON-WIFI-SSID>`. Verify with the `/v1/models` smoke test in §1. |
+| Connection hangs, then times out | Not on the Argonne network | Join `Argonne-auth`. Verify with the `/v1/models` smoke test in §1. |
 | Username validation error | Malformed username | Bare username only: `ac.jdoe`. No `@anl.gov`, no quotes, no special characters. |
 | Error listing valid model names | Bad `model` value | Use an Argo ID from §5 or `GET /v1/models`. Vendor names like `claude-opus-5` are not accepted. |
 | Error mentioning `max_tokens` | o-series model | Use `max_completion_tokens`. GPT-5.x on Argo accepts either. |

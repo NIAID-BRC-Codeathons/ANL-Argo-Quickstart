@@ -11,8 +11,8 @@ export ARGO_USER=ac.yourname      # your Argonne collaborator username
 ```
 
 A JSON list of model names means network and auth are both working. A hang that
-ends in a timeout means you are not on the codeathon network — fix that before
-debugging anything else.
+ends in a timeout means you are not on `Argonne-auth` — fix that before debugging
+anything else.
 
 Every script reads `ARGO_USER` from the environment and fails with a clear message
 if it is unset, so you set your username once per shell rather than editing files.
