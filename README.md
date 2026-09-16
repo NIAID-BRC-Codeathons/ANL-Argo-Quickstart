@@ -16,8 +16,9 @@ Everything else behaves like the vendor APIs you already know.
 **Open models are available too, and they are not Argo.** Llama 4 Scout, Qwen 3.6, and
 an embedding model run on Argonne hardware at `mango.cels.anl.gov`, reachable from the
 same network with no credential at all — see
-[`OpenModelCheatsheet.md`](OpenModelCheatsheet.md). Everything in *this* document is
-about Argo unless it says otherwise.
+[`OpenModelCheatsheet.md`](OpenModelCheatsheet.md) and
+[`examples/open/`](examples/open/). Everything in *this* document is about Argo unless
+it says otherwise.
 
 ## What's in this repo
 
@@ -31,11 +32,13 @@ examples/
 ├── curl/                   zero-dependency HTTP, one script per endpoint
 ├── python/                 the openai and anthropic SDKs
 ├── frameworks/             LangChain and LlamaIndex
-└── agents/                 Claude Code, Continue.dev, aider
+├── agents/                 Claude Code, Continue.dev, aider
+└── open/                   the self-hosted open models — not Argo
 ```
 
-[`examples/README.md`](examples/README.md) has the per-file index, and
-[`OpenModelCheatsheet.md`](OpenModelCheatsheet.md) covers the self-hosted open models.
+[`examples/README.md`](examples/README.md) has the per-file index.
+[`OpenModelCheatsheet.md`](OpenModelCheatsheet.md) is the prose guide to the open
+models; `examples/open/` is the same material as files you can run.
 
 **Two-minute start:**
 
@@ -268,8 +271,13 @@ Face model names instead of Argo short IDs.
 | Qwen 3.6 | reasoning and tool calling | `http://mango.cels.anl.gov:8004/v1` |
 | SFR-Embedding-Mistral | embeddings, 4,096 dimensions | `http://mango.cels.anl.gov:9998/v1` |
 
-[`OpenModelCheatsheet.md`](OpenModelCheatsheet.md) has runnable Python and curl for all
-three, plus streaming and tool calling.
+[`OpenModelCheatsheet.md`](OpenModelCheatsheet.md) has Python and curl for all three,
+plus streaming and tool calling. [`examples/open/`](examples/open/) is the same set as
+files you can execute:
+
+```bash
+./examples/open/00-smoke-test.sh      # all three servers, no credential needed
+```
 
 One gotcha worth carrying over from §6: Qwen reasons before it answers, and that
 reasoning spends your `max_tokens`. Budget 2,000–4,000 for simple questions, 8,000+ for

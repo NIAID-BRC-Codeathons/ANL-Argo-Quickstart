@@ -71,7 +71,10 @@ availability — say so and label that claim unverified rather than letting it s
 alongside measured ones.
 
 **Known unverified:** everything in `examples/agents/` (Claude Code, Continue, aider)
-is written from convention and has never been run end to end.
+is written from convention and has never been run end to end. The Python files in
+`examples/open/` are also unexecuted — no `openai` package is installable on the host
+they were written on — though every behavior they claim was checked against the live
+servers with raw HTTP, and the shell examples there were run.
 
 ## Section 2 is coordinator-approved language
 
@@ -87,6 +90,32 @@ contradict it. Raise a proposed change with the coordinators instead.
 - The username is not a secret, but it is an identifier: scripts note that it lands in
   shell history and should not go in `~/.bashrc` or a committed config.
 - Shell examples are POSIX `sh`-compatible where they can be.
+
+### `examples/open/` is the exception, deliberately
+
+The open-weight models on `mango.cels.anl.gov` are not Argo, and `examples/open/`
+departs from the rules above on purpose. Do not "fix" it to match its siblings:
+
+- **`MANGO_HOST`, not `ARGO_USER`**, defaulting to `mango.cels.anl.gov`. There is no
+  username in these calls at all.
+- **`api_key="EMPTY"`.** The vLLM servers require the field and never read it. A
+  participant's Argo username in that slot is wrong, not merely redundant.
+- **Full served model names** — `RedHatAI/Llama-4-Scout-17B-16E-Instruct-FP8-dynamic`,
+  not an Argo short ID and not the upstream `meta-llama/...` name either. The servers
+  serve quantized builds; `GET /v1/models` on each port is the source of truth, the
+  same way `GET /v1/models` is for Argo.
+- Ports carry the meaning the way Argo uses model IDs: 8003 Llama chat, 8004 Qwen,
+  9998 embeddings.
+
+Measured on 2026-09-16 and worth keeping in the files: Qwen's internal reasoning
+consumes `max_tokens`, so a small budget returns `content=''` with
+`finish_reason='length'`; and only Qwen does tool calling — Llama on 8003 answers a
+`tools` request with HTTP 400 asking for `--enable-auto-tool-choice` and
+`--tool-call-parser`, which are server launch flags.
+
+The prose copy of this material is `OpenModelCheatsheet.md` (contributed by the
+coordinators), not a README section — so open-model changes touch four files, not
+three: `README.md`, `argo-quickstart.html`, `OpenModelCheatsheet.md`, `examples/open/`.
 
 ## Housekeeping
 
