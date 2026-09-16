@@ -13,6 +13,12 @@ Two things make Argo different from calling OpenAI or Anthropic directly:
 
 Everything else behaves like the vendor APIs you already know.
 
+**Open models are available too, and they are not Argo.** Llama 4 Scout, Qwen 3.6, and
+an embedding model run on Argonne hardware at `mango.cels.anl.gov`, reachable from the
+same network with no credential at all — see
+[`OpenModelCheatsheet.md`](OpenModelCheatsheet.md). Everything in *this* document is
+about Argo unless it says otherwise.
+
 ## What's in this repo
 
 Every code block below is also a runnable file under [`examples/`](examples/), so you
@@ -28,7 +34,8 @@ examples/
 └── agents/                 Claude Code, Continue.dev, aider
 ```
 
-[`examples/README.md`](examples/README.md) has the per-file index.
+[`examples/README.md`](examples/README.md) has the per-file index, and
+[`OpenModelCheatsheet.md`](OpenModelCheatsheet.md) covers the self-hosted open models.
 
 **Two-minute start:**
 
@@ -246,6 +253,28 @@ below is a curated starting point, current as of the Argo documentation dated
 > OpenAI name (`text-embedding-3-small`). Prefer the official name with LangChain and
 > LlamaIndex — those libraries sometimes validate embedding model names client-side and
 > will reject `v3small` before the request ever leaves your machine.
+
+### Open models, outside Argo
+
+Three open-weight models run on `mango.cels.anl.gov`, self-hosted on Argonne hardware
+rather than proxied out to a vendor. They speak the same OpenAI-compatible protocol,
+but they are **not** part of Argo, so the two rules at the top of this document do not
+apply: different base URL, no credential at all (`api_key="EMPTY"`), and full Hugging
+Face model names instead of Argo short IDs.
+
+| Model | Role | Base URL |
+|---|---|---|
+| Llama 4 Scout | general chat | `http://mango.cels.anl.gov:8003/v1` |
+| Qwen 3.6 | reasoning and tool calling | `http://mango.cels.anl.gov:8004/v1` |
+| SFR-Embedding-Mistral | embeddings, 4,096 dimensions | `http://mango.cels.anl.gov:9998/v1` |
+
+[`OpenModelCheatsheet.md`](OpenModelCheatsheet.md) has runnable Python and curl for all
+three, plus streaming and tool calling.
+
+One gotcha worth carrying over from §6: Qwen reasons before it answers, and that
+reasoning spends your `max_tokens`. Budget 2,000–4,000 for simple questions, 8,000+ for
+hard ones, or you get an empty response — the same failure mode as `gemini35flash` on
+Argo.
 
 ---
 

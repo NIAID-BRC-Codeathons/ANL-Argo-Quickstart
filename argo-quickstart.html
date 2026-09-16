@@ -159,6 +159,7 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap;font-family:var(--f-
   <p class="eyebrow">2026 NIAID AI Codeathon &middot; Participant Guide</p>
   <h1>Using AI models through Argo</h1>
   <p class="lede">Argo is Argonne National Laboratory&rsquo;s LLM gateway &mdash; one API in front of frontier models from <b>OpenAI, Anthropic, and Google</b>, plus text embeddings. Access has been arranged for every participant. Two things differ from calling the vendors directly: <b>there are no API keys</b>, and <b>model names are Argo&rsquo;s own short strings</b>.</p>
+  <p class="lede"><b>Open models are available too, and they are not Argo.</b> Llama 4 Scout, Qwen 3.6 and an embedding model run on Argonne hardware at <code>mango.cels.anl.gov</code>, reachable from the same network with no credential at all &mdash; see the <a href="https://github.com/NIAID-BRC-Codeathons/ANL-Argo-Quickstart/blob/main/OpenModelCheatsheet.md">Open Model Cheatsheet</a>. Everything on <i>this</i> page is about Argo unless it says otherwise.</p>
 </header>
 
 <div class="setup">
@@ -344,6 +345,25 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap;font-family:var(--f-
     <div class="note">
       <span class="tag">Embedding names</span>
       <p>Embedding models accept either the Argo short name (<code>v3small</code>) or the official OpenAI name (<code>text-embedding-3-small</code>). <b>Prefer the official name with LangChain and LlamaIndex</b> &mdash; those libraries sometimes validate embedding model names client-side and will reject <code>v3small</code> before the request ever leaves your machine.</p>
+    </div>
+
+    <h3>Open models, outside Argo</h3>
+    <p>Three open-weight models run on <code>mango.cels.anl.gov</code>, self-hosted on Argonne hardware rather than proxied out to a vendor. They speak the same OpenAI-compatible protocol, but they are <b>not</b> part of Argo, so the two rules at the top of this guide do not apply: different base URL, no credential at all (<code>api_key="EMPTY"</code>), and full Hugging Face model names instead of Argo short IDs.</p>
+
+    <div class="tw"><table>
+      <thead><tr><th>Model</th><th>Role</th><th>Base URL</th></tr></thead>
+      <tbody>
+        <tr><td>Llama 4 Scout</td><td>general chat</td><td><code>http://mango.cels.anl.gov:8003/v1</code></td></tr>
+        <tr><td>Qwen 3.6</td><td>reasoning and tool calling</td><td><code>http://mango.cels.anl.gov:8004/v1</code></td></tr>
+        <tr><td>SFR-Embedding-Mistral</td><td>embeddings, 4,096 dimensions</td><td><code>http://mango.cels.anl.gov:9998/v1</code></td></tr>
+      </tbody>
+    </table></div>
+
+    <p>The <a href="https://github.com/NIAID-BRC-Codeathons/ANL-Argo-Quickstart/blob/main/OpenModelCheatsheet.md">Open Model Cheatsheet</a> has runnable Python and curl for all three, plus streaming and tool calling.</p>
+
+    <div class="note caution">
+      <span class="tag">Qwen budget</span>
+      <p>Qwen reasons before it answers, and that reasoning spends your <code>max_tokens</code>. Budget 2,000&ndash;4,000 for simple questions and 8,000+ for hard ones, or you get an empty response &mdash; the same failure mode as <code>gemini35flash</code> on Argo.</p>
     </div>
   </section>
 
